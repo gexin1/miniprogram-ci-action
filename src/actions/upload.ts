@@ -1,5 +1,5 @@
 import * as core from "@actions/core";
-import ci from "../utils/miniprogram-ci.ts";
+import * as ci from "miniprogram-ci";
 import { onProgressUpdate } from "../utils/context.ts";
 import type { ActionContext } from "../types.ts";
 

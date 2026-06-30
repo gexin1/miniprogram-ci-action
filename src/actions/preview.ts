@@ -1,6 +1,6 @@
 import * as fs from "fs";
 import * as core from "@actions/core";
-import ci from "../utils/miniprogram-ci.ts";
+import * as ci from "miniprogram-ci";
 import { onProgressUpdate } from "../utils/context.ts";
 import { parseNumberInput } from "../utils/input.ts";
 import { getTemporaryPath } from "../utils/path.ts";

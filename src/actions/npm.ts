@@ -1,6 +1,6 @@
 import * as core from "@actions/core";
 import * as exec from "@actions/exec";
-import ci from "../utils/miniprogram-ci.ts";
+import * as ci from "miniprogram-ci";
 import type { ActionContext } from "../types.ts";
 
 async function npm(context: ActionContext): Promise<void> {
