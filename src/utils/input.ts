@@ -1,4 +1,4 @@
-import type { ActionType } from "../types.ts";
+import type { ActionType, QrcodeFormat } from "../types.ts";
 
 interface NumberInputOptions {
   min?: number;
@@ -13,6 +13,21 @@ export function parseActionType(value: string): ActionType {
   }
 
   throw new Error(`action_type must be "preview" or "upload", got "${value}"`);
+}
+
+export function parseQrcodeFormat(value: string): QrcodeFormat {
+  const qrcodeFormat = value.trim() || "base64";
+
+  if (
+    qrcodeFormat === "base64" || qrcodeFormat === "image" ||
+    qrcodeFormat === "terminal"
+  ) {
+    return qrcodeFormat;
+  }
+
+  throw new Error(
+    `qrcode_format must be "base64", "image", or "terminal", got "${value}"`,
+  );
 }
 
 export function parseNumberInput(

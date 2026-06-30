@@ -2,7 +2,11 @@ import * as fs from "fs";
 import * as core from "@actions/core";
 import * as ci from "miniprogram-ci";
 import { onProgressUpdate } from "../utils/context.ts";
-import { parseBooleanInput, parseNumberInput } from "../utils/input.ts";
+import {
+  parseBooleanInput,
+  parseNumberInput,
+  parseQrcodeFormat,
+} from "../utils/input.ts";
 import { getTemporaryPath } from "../utils/path.ts";
 import type { ActionContext } from "../types.ts";
 import {
@@ -18,7 +22,7 @@ async function preview(context: ActionContext): Promise<void> {
   const scene = parseNumberInput("scene", core.getInput("scene"), 1011, {
     min: 1,
   });
-  const qrcodeFormat = core.getInput("qrcode_format") || "base64";
+  const qrcodeFormat = parseQrcodeFormat(core.getInput("qrcode_format"));
   const tempImagePath = core.getInput("qrcode_output_dest") ||
     getTemporaryPath(project.appid);
 

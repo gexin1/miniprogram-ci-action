@@ -18,6 +18,8 @@ export interface ProjectConfig {
 
 export type ActionType = "preview" | "upload";
 
+export type QrcodeFormat = "base64" | "image" | "terminal";
+
 export interface ActionContext {
   project: Project;
   version: string;

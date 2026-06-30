@@ -37,10 +37,6 @@ export async function activate(): Promise<void> {
     useCOS: parseBooleanInput("use_cos", core.getInput("use_cos")),
   };
 
-  if (core.isDebug()) {
-    console.debug("env", process.env);
-  }
-
   try {
     await actions[actionType](context);
   } catch (error) {

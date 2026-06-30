@@ -5,6 +5,7 @@ import {
   parseBooleanInput,
   parseJSONInput,
   parseNumberInput,
+  parseQrcodeFormat,
 } from "../src/utils/input.ts";
 
 test("parseActionType defaults to upload", () => {
@@ -21,6 +22,20 @@ test("parseActionType rejects unsupported actions", () => {
   assert.throws(
     () => parseActionType("deploy"),
     /action_type must be "preview" or "upload"/,
+  );
+});
+
+test("parseQrcodeFormat defaults to base64 and accepts supported formats", () => {
+  assert.equal(parseQrcodeFormat(""), "base64");
+  assert.equal(parseQrcodeFormat("base64"), "base64");
+  assert.equal(parseQrcodeFormat("image"), "image");
+  assert.equal(parseQrcodeFormat("terminal"), "terminal");
+});
+
+test("parseQrcodeFormat rejects unsupported formats", () => {
+  assert.throws(
+    () => parseQrcodeFormat("png"),
+    /qrcode_format must be "base64", "image", or "terminal"/,
   );
 });
 
