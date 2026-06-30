@@ -1,46 +1,46 @@
-name: "GitHub Action for WeChat MiniProgram"
-description: "A GitHub Action to automate deploying WeChat MiniProgram. Based on the miniprogram-ci."
-author: "Crazy Urus"
+name: "miniprogram-ci-action"
+description: "使用 miniprogram-ci 预览和上传微信小程序的 GitHub Action。"
+author: "gexin1"
 branding:
   icon: package
   color: green
 inputs:
   action_type:
-    description: "Action type, preview or upload"
+    description: "执行类型，可选 preview 或 upload"
     required: false
     default: upload
   project_path:
-    description: "Project path, which contains project.config.json"
+    description: "小程序项目路径，需要包含 project.config.json"
     required: false
     default: "."
   page_path:
-    description: "Page path, one of the pages in app.json"
+    description: "预览页面路径，需要是 app.json 中声明的页面"
     required: false
   page_query:
-    description: "Page query"
+    description: "预览页面启动参数"
     required: false
     default: ""
   scene:
-    description: "Scene code"
+    description: "预览场景值"
     required: false
     default: "1011"
   version:
-    description: "Publish version"
+    description: "上传版本号"
     required: false
     default: 1.0.0
   description:
-    description: "Release notes"
+    description: "上传备注"
     required: false
   ci:
-    description: "Number of CI"
+    description: "CI 机器人编号，取值范围 1-30"
     required: false
     default: "24"
 outputs:
   preview_qrcode:
-    description: "The base64 content of the MiniProgram to preview the QR code"
+    description: "小程序预览二维码的 base64 内容"
   preview_qrcode_path:
-    description: "The file path of the MiniProgram to preview the QR code"
+    description: "小程序预览二维码的本地文件路径"
 runs:
-  using: "node16"
-  pre: "./scripts/install.js"
-  main: "./scripts/main.js"
+  using: "node24"
+  pre: "./scripts/install.ts"
+  main: "./src/index.ts"

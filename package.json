@@ -2,35 +2,37 @@
   "name": "miniprogram-ci-action",
   "version": "1.0.0",
   "description": "A GitHub Action to automate deploying WeChat MiniProgram",
+  "type": "module",
   "module": "./src/index.ts",
-  "scripts": {},
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "node --test test/**/*.test.ts",
+    "check": "npm run typecheck && npm test"
+  },
   "keywords": [
     "miniprogram",
     "action"
   ],
-  "author": {
-    "email": "crazyurus@vip.qq.com",
-    "name": "Crazy Urus",
-    "url": "https://github.com/crazyurus"
-  },
+  "author": "gexin1",
   "repository": {
     "type": "git",
-    "url": "https://github.com/crazyurus/miniprogram-action"
+    "url": "https://github.com/gexin1/miniprogram-ci-action.git"
   },
   "bugs": {
-    "url": "https://github.com/crazyurus/miniprogram-action/issues",
-    "email": "crazyurus@vip.qq.com"
+    "url": "https://github.com/gexin1/miniprogram-ci-action/issues"
   },
   "dependencies": {
     "@actions/core": "^3.0.1",
     "@actions/exec": "^3.0.0",
-    "miniprogram-ci": "^2.1.31",
-    "ts-node": "^10.9.2"
+    "miniprogram-ci": "^2.1.31"
   },
   "devDependencies": {
     "@types/node": "^26.0.1",
     "typescript": "^6.0.3"
   },
   "license": "GPL-3.0",
-  "packageManager": "pnpm@7.17.1"
+  "packageManager": "npm@10.9.4",
+  "volta": {
+    "node": "24.18.0"
+  }
 }

@@ -1,7 +1,7 @@
-import * as ci from "miniprogram-ci";
 import * as core from "@actions/core";
 import * as exec from "@actions/exec";
-import type { ActionContext } from "../types";
+import ci from "../utils/miniprogram-ci.ts";
+import type { ActionContext } from "../types.ts";
 
 async function npm(context: ActionContext): Promise<void> {
   const project = new ci.Project(context.project);

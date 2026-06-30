@@ -1,15 +1,18 @@
-import * as ci from "miniprogram-ci";
 import * as fs from "fs";
 import * as core from "@actions/core";
-import { onProgressUpdate } from "../utils/context";
-import { getTemporaryPath } from "../utils/path";
-import type { ActionContext } from "../types";
+import ci from "../utils/miniprogram-ci.ts";
+import { onProgressUpdate } from "../utils/context.ts";
+import { parseNumberInput } from "../utils/input.ts";
+import { getTemporaryPath } from "../utils/path.ts";
+import type { ActionContext } from "../types.ts";
 
 async function preview(context: ActionContext): Promise<void> {
   const project = new ci.Project(context.project);
   const pagePath = core.getInput("page_path");
   const pageQuery = core.getInput("page_query");
-  const scene = Number(core.getInput("scene")) || 1011;
+  const scene = parseNumberInput("scene", core.getInput("scene"), 1011, {
+    min: 1,
+  });
   const tempImagePath = getTemporaryPath(project.appid);
 
   core.info("start preview");
@@ -28,7 +31,6 @@ async function preview(context: ActionContext): Promise<void> {
     pagePath,
     searchQuery: pageQuery,
     scene,
-    allowIgnoreUnusedFiles: context.allowIgnoreUnusedFiles,
     onProgressUpdate,
   });
 

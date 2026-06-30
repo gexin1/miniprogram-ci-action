@@ -1,7 +1,7 @@
-import * as ci from "miniprogram-ci";
 import * as core from "@actions/core";
-import { onProgressUpdate } from "../utils/context";
-import type { ActionContext } from "../types";
+import ci from "../utils/miniprogram-ci.ts";
+import { onProgressUpdate } from "../utils/context.ts";
+import type { ActionContext } from "../types.ts";
 
 async function upload(context: ActionContext): Promise<void> {
   const project = new ci.Project(context.project);
@@ -17,7 +17,6 @@ async function upload(context: ActionContext): Promise<void> {
     },
     robot: context.robot,
     threads: context.threads,
-    allowIgnoreUnusedFiles: context.allowIgnoreUnusedFiles,
     onProgressUpdate,
   });
 }

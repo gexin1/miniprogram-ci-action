@@ -1,11 +1,10 @@
 import * as fs from "fs";
-import { readJSON } from "./json";
+import { readJSON } from "./json.ts";
 import {
-  getMiniProgramRootPath,
   getPackageConfigPath,
   getProjectConfigPath,
-} from "./path";
-import type { Project, ProjectConfig } from "../types";
+} from "./path.ts";
+import type { Project, ProjectConfig } from "../types.ts";
 
 export function readProjectConfig(rootPath: string): ProjectConfig {
   const projectFilePath = getProjectConfigPath(rootPath);
@@ -29,18 +28,31 @@ export function createProject(
   rootPath: string,
   projectConfig: ProjectConfig,
 ): Project {
+  const privateKey = process.env.PRIVATE_KEY;
+  const privateKeyPath = process.env.PRIVATE_KEY_PATH;
+
   return {
     appid: projectConfig.appid,
-    type: projectConfig.compileType === "miniprogram"
-      ? "miniProgram"
-      : "miniProgramPlugin",
-    projectPath: getMiniProgramRootPath(
-      rootPath,
-      projectConfig.miniprogramRoot,
-    ),
-    privateKey: process.env.PRIVATE_KEY || "",
+    type: getProjectType(projectConfig.compileType),
+    projectPath: rootPath,
+    ...(privateKey ? { privateKey } : {}),
+    ...(privateKeyPath ? { privateKeyPath } : {}),
     ignores: ["node_modules/**/*"],
   };
+}
+
+export function getProjectType(
+  compileType?: ProjectConfig["compileType"],
+): Project["type"] {
+  if (compileType === "plugin") {
+    return "miniProgramPlugin";
+  }
+
+  if (compileType === "game" || compileType === "minigame") {
+    return "miniGame";
+  }
+
+  return "miniProgram";
 }
 
 export function hasPackageJSON(rootPath: string): boolean {

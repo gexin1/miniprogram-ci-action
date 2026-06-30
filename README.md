@@ -1,121 +1,138 @@
-# WeChat MiniProgram GitHub Action
+# miniprogram-ci-action
 
-> 中文使用文档
-> [利用 GitHub Actions 实现小程序的持续集成](https://juejin.cn/post/7173608478768889886)
+GitHub Action for previewing and uploading WeChat MiniProgram projects with
+[`miniprogram-ci`](https://www.npmjs.com/package/miniprogram-ci).
 
-A [GitHub Action](https://github.com/features/actions) to automate deploying
-WeChat MiniProgram by using
-[miniprogram-ci](https://www.npmjs.com/package/miniprogram-ci).
+This project is modified from
+[`crazyurus/miniprogram-action`](https://github.com/crazyurus/miniprogram-action).
 
-It will enable workflows to easily preview and upload your MiniProgram to the
-WeChat.
+## Requirements
 
-The implementation of preview or upload is the same as VSCode extension
-[miniprogram-vscode-extension](https://marketplace.visualstudio.com/items?itemName=crazyurus.miniprogram-vscode-extension).
+- GitHub Actions runner with `node24`
+- A valid MiniProgram `project.config.json`
+- A WeChat MiniProgram CI private key
 
-# Usage
+Before using this action, log in to the WeChat public platform as a MiniProgram
+administrator, open "开发" -> "开发设置" -> "小程序代码上传", generate and download
+the code upload private key, then configure the IP whitelist or disable the
+whitelist after understanding the risk.
 
-Here's an example workflow which publishes an extension when you push to the
-master branch.
+Official documentation:
+[miniprogram-ci](https://developers.weixin.qq.com/miniprogram/dev/devtools/ci.html)
 
-## Preview
+## Usage
 
-````yaml
+### Preview
+
+```yaml
 name: Preview MiniProgram
+
 on:
-  push:
-    branches:
-      - master
+  pull_request:
+  workflow_dispatch:
+
 jobs:
   preview:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+
       - id: preview
-        name: Compile
-        uses: crazyurus/miniprogram-action@2.0.0
+        uses: gexin1/miniprogram-ci-action@v1
         with:
           action_type: preview
+          project_path: .
+          page_path: pages/index/index
+          page_query: from=github
+          scene: "1011"
+          ci: "24"
         env:
           PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
-      - name: QR Code
-        uses: peter-evans/commit-comment@v2
-        with:
-          body: |
-            Copy the following content to the address bar of the browser to open the preview QR code
 
-            ```
-            ${{ steps.preview.outputs.preview_qrcode }}
-            ```
-````
+      - name: Print QR code path
+        run: echo "${{ steps.preview.outputs.preview_qrcode_path }}"
+```
 
-## Upload
+### Upload
 
 ```yaml
 name: Upload MiniProgram
+
 on:
   push:
     tags:
-      - "*.*.*"
+      - "v*"
+
 jobs:
   upload:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Upload
-        uses: crazyurus/miniprogram-action@2.0.0
+      - uses: actions/checkout@v4
+
+      - uses: gexin1/miniprogram-ci-action@v1
         with:
           action_type: upload
+          project_path: .
           version: ${{ github.ref_name }}
+          description: ${{ github.event.head_commit.message }}
+          ci: "24"
         env:
           PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
 ```
 
-# Parameters
+## Inputs
 
-## Input
+| Name | Required | Default | Description |
+| --- | --- | --- | --- |
+| `action_type` | no | `upload` | `preview` or `upload`. |
+| `project_path` | no | `.` | Directory containing `project.config.json`. |
+| `page_path` | no | | Preview page path, for example `pages/index/index`. |
+| `page_query` | no | | Preview page query string, for example `a=1&b=2`. |
+| `scene` | no | `1011` | Preview scene value. |
+| `version` | no | `1.0.0` | Upload version. |
+| `description` | no | `通过 MiniProgram GitHub Action 上传` | Upload or preview description. |
+| `ci` | no | `24` | CI robot number. `miniprogram-ci` supports `1` to `30`. |
 
-|     Name     | Required | Description                                      | Default Value |
-| :----------: | :------: | :----------------------------------------------- | :-----------: |
-| action_type  | `false`  | Action type, preview or upload                   |   `upload`    |
-| project_path | `false`  | Project path, which contains project.config.json |      `.`      |
-|  page_path   | `false`  | Page path, one of the pages in app.json          |               |
-|  page_query  | `false`  | Page query                                       |               |
-|    scene     | `false`  | Scene code                                       |    `1011`     |
-|   version    | `false`  | Publish version                                  |    `1.0.0`    |
-| description  | `false`  | Release notes                                    |               |
-|      ci      | `false`  | Number of CI                                     |     `24`      |
+## Outputs
 
-## Output
+| Name | Description |
+| --- | --- |
+| `preview_qrcode` | Base64 content of the preview QR code. Only set for `preview`. |
+| `preview_qrcode_path` | Local path of the preview QR code image. Only set for `preview`. |
 
-|        Name         | Always  | Description                                                  | Default Value |
-| :-----------------: | :-----: | :----------------------------------------------------------- | :-----------: |
-|   preview_qrcode    | `false` | The base64 content of the MiniProgram to preview the QR code |               |
-| preview_qrcode_path | `false` | The file path of the MiniProgram to preview the QR code      |               |
+## Secrets
 
-# Secrets
+Set one of the following environment variables:
 
-The `PRIVATE_KEY` secret is used to authenticate with WeChat when running the
-`miniprogram-ci` CLI. You can find out how to create this token here on the
-WeChat Developers:
-[CI](https://developers.weixin.qq.com/miniprogram/dev/devtools/ci.html)
+| Name | Description |
+| --- | --- |
+| `PRIVATE_KEY` | Private key file content. Recommended for GitHub Secrets. |
+| `PRIVATE_KEY_PATH` | Private key file path. Useful for local debugging. |
 
-There are mainly the following primary steps:
+`PRIVATE_KEY` example:
 
-1. Login to https://mp.weixin.qq.com
-2. Find "开发" - "开发设置" - "小程序代码上传"
-3. Generate private key and download key file, and **close IP whitelist**
-4. Copy the contents of the key file and add in GitHub repository settings. Find
-   "Settings" - "Secrets" - "Actions", and click "New repository secret" button.
-   Enter the "Name" as `PRIVATE_KEY`, and "Secret" as the contents of the key
-   file
+```yaml
+env:
+  PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+```
 
-# Example Use Cases
+## Project Configuration
 
-- Preview MiniProgram if the `master` branch has changed since the last build.
-- Upload MiniProgram when the tag is created on GitHub.
+This action passes `setting.useProjectConfig: true` to `miniprogram-ci`, so build
+settings are read from your `project.config.json`.
 
-Here is a example project
-[recruit-miniprogram](https://github.com/crazyurus/recruit-miniprogram/tree/master/.github/workflows)
+`miniprogram-ci` has deprecated the old `allowIgnoreUnusedFiles` upload/preview
+option. Configure unused-file filtering in `project.config.json` instead.
+
+If `package.json` exists under `project_path`, this action runs `npm install`
+inside the project and then calls `ci.packNpm`, matching the WeChat Developer
+Tools "构建 npm" behavior.
+
+## Development
+
+```bash
+npm install
+npm run check
+```
+
+`npm run check` runs TypeScript type checking and Node's built-in test runner.

@@ -1,13 +1,17 @@
 import * as os from "os";
 import * as core from "@actions/core";
+import { parseNumberInput } from "./input.ts";
 
 interface TaskStatus {
-  status: "doing" | "done" | "warn" | "fail";
+  status: "doing" | "done" | "warn" | "fail" | "info";
   message: string;
 }
 
 export function getCIBot(): number {
-  return core.getInput("ci") ? Number(core.getInput("ci")) : 24;
+  return parseNumberInput("ci", core.getInput("ci"), 24, {
+    min: 1,
+    max: 30,
+  });
 }
 
 export function getThreads(): number {

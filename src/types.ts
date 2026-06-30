@@ -4,6 +4,7 @@ export interface Project {
   projectPath: string;
   ignores: string[];
   privateKey?: string;
+  privateKeyPath?: string;
 }
 
 export interface ProjectConfig {
@@ -11,7 +12,7 @@ export interface ProjectConfig {
   projectname: string;
   libVersion: string;
   miniprogramRoot?: string;
-  compileType?: "miniprogram" | "plugin";
+  compileType?: "miniprogram" | "plugin" | "game" | "minigame";
   ignoreUploadUnusedFiles: boolean;
 }
 
@@ -23,5 +24,4 @@ export interface ActionContext {
   description: string;
   robot: number;
   threads: number;
-  allowIgnoreUnusedFiles: boolean;
 }
