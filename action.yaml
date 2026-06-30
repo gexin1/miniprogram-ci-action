@@ -1,0 +1,46 @@
+name: "GitHub Action for WeChat MiniProgram"
+description: "A GitHub Action to automate deploying WeChat MiniProgram. Based on the miniprogram-ci."
+author: "Crazy Urus"
+branding:
+  icon: package
+  color: green
+inputs:
+  action_type:
+    description: "Action type, preview or upload"
+    required: false
+    default: upload
+  project_path:
+    description: "Project path, which contains project.config.json"
+    required: false
+    default: "."
+  page_path:
+    description: "Page path, one of the pages in app.json"
+    required: false
+  page_query:
+    description: "Page query"
+    required: false
+    default: ""
+  scene:
+    description: "Scene code"
+    required: false
+    default: "1011"
+  version:
+    description: "Publish version"
+    required: false
+    default: 1.0.0
+  description:
+    description: "Release notes"
+    required: false
+  ci:
+    description: "Number of CI"
+    required: false
+    default: "24"
+outputs:
+  preview_qrcode:
+    description: "The base64 content of the MiniProgram to preview the QR code"
+  preview_qrcode_path:
+    description: "The file path of the MiniProgram to preview the QR code"
+runs:
+  using: "node16"
+  pre: "./scripts/install.js"
+  main: "./scripts/main.js"
