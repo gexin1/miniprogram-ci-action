@@ -1,9 +1,6 @@
 import * as fs from "fs";
 import { readJSON } from "./json.ts";
-import {
-  getPackageConfigPath,
-  getProjectConfigPath,
-} from "./path.ts";
+import { getProjectConfigPath } from "./path.ts";
 import type { Project, ProjectConfig } from "../types.ts";
 
 export function readProjectConfig(rootPath: string): ProjectConfig {
@@ -53,8 +50,4 @@ export function getProjectType(
   }
 
   return "miniProgram";
-}
-
-export function hasPackageJSON(rootPath: string): boolean {
-  return fs.existsSync(getPackageConfigPath(rootPath));
 }

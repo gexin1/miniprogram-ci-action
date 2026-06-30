@@ -22,6 +22,8 @@ export interface ActionContext {
   project: Project;
   version: string;
   description: string;
+  setting: Record<string, unknown>;
   robot: number;
   threads: number;
+  useCOS?: boolean;
 }

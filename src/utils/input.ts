@@ -43,3 +43,47 @@ export function parseNumberInput(
 
   return numberValue;
 }
+
+export function parseBooleanInput(
+  name: string,
+  value: string,
+  defaultValue?: boolean,
+): boolean | undefined {
+  const normalizedValue = value.trim().toLowerCase();
+
+  if (!normalizedValue) {
+    return defaultValue;
+  }
+
+  if (["true", "1", "yes", "y"].includes(normalizedValue)) {
+    return true;
+  }
+
+  if (["false", "0", "no", "n"].includes(normalizedValue)) {
+    return false;
+  }
+
+  throw new Error(`${name} must be a boolean, got "${value}"`);
+}
+
+export function parseJSONInput<T>(
+  name: string,
+  value: string,
+  defaultValue: T,
+): T {
+  const normalizedValue = value.trim();
+
+  if (!normalizedValue) {
+    return defaultValue;
+  }
+
+  try {
+    return JSON.parse(normalizedValue) as T;
+  } catch (error) {
+    throw new Error(
+      `${name} must be valid JSON: ${
+        error instanceof Error ? error.message : String(error)
+      }`,
+    );
+  }
+}

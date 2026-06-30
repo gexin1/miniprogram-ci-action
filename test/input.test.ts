@@ -1,6 +1,11 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { parseActionType, parseNumberInput } from "../src/utils/input.ts";
+import {
+  parseActionType,
+  parseBooleanInput,
+  parseJSONInput,
+  parseNumberInput,
+} from "../src/utils/input.ts";
 
 test("parseActionType defaults to upload", () => {
   assert.equal(parseActionType(""), "upload");
@@ -35,5 +40,31 @@ test("parseNumberInput applies defaults and validates integer range", () => {
   assert.throws(
     () => parseNumberInput("ci", "1.5", 24, { min: 1, max: 30 }),
     /ci must be an integer/,
+  );
+});
+
+test("parseBooleanInput applies defaults and validates booleans", () => {
+  assert.equal(parseBooleanInput("use_cos", "", undefined), undefined);
+  assert.equal(parseBooleanInput("use_cos", "", false), false);
+  assert.equal(parseBooleanInput("use_cos", "true"), true);
+  assert.equal(parseBooleanInput("use_cos", "1"), true);
+  assert.equal(parseBooleanInput("use_cos", "no"), false);
+
+  assert.throws(
+    () => parseBooleanInput("use_cos", "maybe"),
+    /use_cos must be a boolean/,
+  );
+});
+
+test("parseJSONInput parses JSON and rejects invalid JSON", () => {
+  assert.deepEqual(
+    parseJSONInput("setting_json", '{"useProjectConfig":true}', {}),
+    { useProjectConfig: true },
+  );
+  assert.deepEqual(parseJSONInput("setting_json", "", { a: 1 }), { a: 1 });
+
+  assert.throws(
+    () => parseJSONInput("setting_json", "{", {}),
+    /setting_json must be valid JSON/,
   );
 });

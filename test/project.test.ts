@@ -6,7 +6,6 @@ import test from "node:test";
 import {
   createProject,
   getProjectType,
-  hasPackageJSON,
   readProjectConfig,
 } from "../src/utils/project.ts";
 
@@ -88,12 +87,4 @@ test("getProjectType defaults to miniProgram", () => {
   assert.equal(getProjectType("plugin"), "miniProgramPlugin");
   assert.equal(getProjectType("game"), "miniGame");
   assert.equal(getProjectType("minigame"), "miniGame");
-});
-
-test("hasPackageJSON detects package.json in project root", () => {
-  const projectPath = makeTempProject();
-
-  assert.equal(hasPackageJSON(projectPath), false);
-  fs.writeFileSync(path.join(projectPath, "package.json"), "{}");
-  assert.equal(hasPackageJSON(projectPath), true);
 });

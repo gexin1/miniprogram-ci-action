@@ -13,6 +13,23 @@ inputs:
     description: "小程序项目路径，需要包含 project.config.json"
     required: false
     default: "."
+  version:
+    description: "上传版本号"
+    required: false
+    default: "1.0.0"
+  description:
+    description: "上传或预览备注"
+    required: false
+  ci:
+    description: "CI 机器人编号，取值范围 1-30"
+    required: false
+    default: "24"
+  use_cos:
+    description: "是否使用 COS 异步上传，传给 miniprogram-ci 的 useCOS"
+    required: false
+  setting_json:
+    description: "miniprogram-ci 编译设置 JSON，默认包含 {\"useProjectConfig\":true}"
+    required: false
   page_path:
     description: "预览页面路径，需要是 app.json 中声明的页面"
     required: false
@@ -24,20 +41,21 @@ inputs:
     description: "预览场景值"
     required: false
     default: "1011"
-  version:
-    description: "上传版本号"
+  qrcode_format:
+    description: "预览二维码格式：base64、image 或 terminal"
     required: false
-    default: 1.0.0
-  description:
-    description: "上传备注"
+    default: base64
+  qrcode_output_dest:
+    description: "预览二维码保存路径，不传则写入临时目录"
     required: false
-  ci:
-    description: "CI 机器人编号，取值范围 1-30"
+  big_package_size_support:
+    description: "预览时是否启用 4M 大包支持"
     required: false
-    default: "24"
 outputs:
+  result_json:
+    description: "miniprogram-ci 方法返回值的 JSON 字符串"
   preview_qrcode:
-    description: "小程序预览二维码的 base64 内容"
+    description: "小程序预览二维码的 base64 内容，仅 qrcode_format=base64 时输出"
   preview_qrcode_path:
     description: "小程序预览二维码的本地文件路径"
 runs:
